@@ -84,7 +84,7 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
        foreach( $model->empleosPostulados as $item ){
             $empPost = $empPost .','. $item->titulo;
         }
-        dump($empPost);
+        //dump($empPost);
 
 
 
