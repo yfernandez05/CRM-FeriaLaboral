@@ -4,14 +4,16 @@ namespace App\Http\Controllers;
 
 use Exception;
 use Carbon\Carbon;
+use App\Models\Evento;
+use App\Util\RuleManager;
 use App\Models\Importacion;
 use App\Util\ResultManager;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Util\LogErrorManager;
+use App\Imports\EmpleosImport;
 use App\Imports\ClientesImport;
 use App\Imports\InstitucionesImport;
-use App\Models\Evento;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Database\QueryException;
 
@@ -29,7 +31,20 @@ class ImportacionController extends BaseController
 
         $queryImportaciones = Importacion::where($filters)
             ->with('user');
-            
+
+        if ($this->user->idcuenta != RuleManager::SYSTEM_COMPANY_ACCOUNT || !in_array($this->user->idrol, RuleManager::ADMINISTRATORS_ACCESS)) {
+                // Filtro para listar las importaciones de empresas
+                $queryImportaciones->where(function ($query) {
+                    $query->whereHas('user', function ($query) {
+                        $query->where('idcuenta', '=', $this->user->idcuenta);
+                    })
+                    ->whereHas('user', function ($query) {
+                        $query->where('idempresa', '=', $this->user->idempresa);
+                    });
+                });
+
+
+        }
 
         if ($request->exists('fechadesde')){
             $fechadesde = Carbon::createFromFormat('d-m-Y', $request->fechadesde)->toDateString();
@@ -37,7 +52,7 @@ class ImportacionController extends BaseController
         }
 
         if ($request->exists('fechahasta')) {
-            $fechahasta = Carbon::createFromFormat('d-m-Y', $request->fechahasta)->toDateString();           
+            $fechahasta = Carbon::createFromFormat('d-m-Y', $request->fechahasta)->toDateString();
             $queryImportaciones->whereDate('fecharegistro','<=', $fechahasta);
         }
 
@@ -58,29 +73,29 @@ class ImportacionController extends BaseController
     {
         $result;
         try {
-            
+
             $file = $request->file('file');
 
             $importacion = new Importacion();
-            $importacion->nombrearchivo = $file->getClientOriginalName(); 
+            $importacion->nombrearchivo = $file->getClientOriginalName();
             $importacion->fecharegistro = Carbon::now();
-            $importacion->iduser = $this->user->id; 
+            $importacion->iduser = $this->user->id;
             $importacion->uuidimportacion = Str::uuid();
             $importacion->idcampania = $request->idcampania;
 
             $evento = $request->idevento;
             //$importacion->idevento = $request->idevento;
-            
+
             // $collection = Excel::toCollection(new ClientesImport(), $file);
             // return $collection;
             $clientImport = new ClientesImport($importacion, $evento);
             Excel::import($clientImport, $file);
 
-            $importacion->cantregistros = $clientImport->getRowCount(); 
+            $importacion->cantregistros = $clientImport->getRowCount();
             $importacion->save();
 
             $result = ResultManager::genericSuccessMessage();
-            
+
          } catch (QueryException $e) {
             LogErrorManager::saveInDB($this, __FUNCTION__, $e);
 
@@ -98,28 +113,69 @@ class ImportacionController extends BaseController
     public function saveInstitucion(Request $request){
         $result = "";
         try {
-            
+
             $file = $request->file('file');
             $idasesor = $request->iduser;
 
             $importacion = new Importacion();
-            $importacion->nombrearchivo = $file->getClientOriginalName(); 
+            $importacion->nombrearchivo = $file->getClientOriginalName();
             $importacion->fecharegistro = Carbon::now();
-            $importacion->iduser = $this->user->id; 
+            $importacion->iduser = $this->user->id;
             $importacion->uuidimportacion = Str::uuid();
             //$importacion->iduser = $request->iduser;
 
-            
+
             // $collection = Excel::toCollection(new ClientesImport(), $file);
             // return $collection;
             $institImport = new InstitucionesImport($importacion, $idasesor);
             Excel::import($institImport, $file);
 
-            $importacion->cantregistros = $institImport->getRowCount(); 
+            $importacion->cantregistros = $institImport->getRowCount();
             $importacion->save();
 
             $result = ResultManager::genericSuccessMessage();
-            
+
+         } catch (QueryException $e) {
+            LogErrorManager::saveInDB($this, __FUNCTION__, $e);
+
+            $result = ResultManager::gerericErrorMessage();
+
+        } catch (Exception $e) {
+            LogErrorManager::saveInDB($this, __FUNCTION__, $e);
+
+            $result = ResultManager::gerericErrorMessage();
+        }
+
+        return $result;
+    }
+
+    public function saveEmpleo(Request $request){
+        $result = "";
+        try {
+
+            $file = $request->file('file');
+
+
+            $importacion = new Importacion();
+            $importacion->nombrearchivo = $file->getClientOriginalName();
+            $importacion->fecharegistro = Carbon::now();
+            $importacion->iduser = $this->user->id;
+            $importacion->uuidimportacion = Str::uuid();
+
+            $idempresa = $this->user->idempresa;
+
+            // $collection = Excel::toCollection(new ClientesImport(), $file);
+            // return $collection;
+            $empleosimport = new EmpleosImport($importacion, $idempresa);
+            Excel::import($empleosimport, $file);
+            //$empleosimport->idempresa = $this->user->idempresa;
+
+            $importacion->cantregistros = $empleosimport->getRowCount();
+
+            $importacion->save();
+
+            $result = ResultManager::genericSuccessMessage();
+
          } catch (QueryException $e) {
             LogErrorManager::saveInDB($this, __FUNCTION__, $e);
 

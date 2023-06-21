@@ -2,12 +2,12 @@
 //@import url(https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700);
 
 /*Theme Colors*/
-$themecolor: #eb7b3d;
+$themecolor: #e91a30;
 $themecolor-alt: #1d428a;
 $sidebar: #fff;
 $sidebar-alt:#f9f9f9;
 $sidebar-text: #8d97ad;
-$sidebar-icons: #787f91; 
+$sidebar-icons: #787f91;
 $shadow:1px 0px 20px rgba(0, 0, 0, 0.08);
 $lft:left;
 $rgt:right;
@@ -54,12 +54,12 @@ $indigo:  #6610f2 !default;
 $purple:  #ab8ce4 !default;
 $pink:    #e83e8c !default;
 $red:     #e46a76 !default;
-$orange:  #eb7b3d !default;
+$orange:  #e91a30 !default;
 $yellow:  #fec107 !default;
 $green:   #00c292 !default;
 $teal:    #20c997 !default;
 $cyan:    #01c0c8 !default;
-$primary:  #eb7b3d !default;
+$primary:  #e91a30 !default;
 $text-muted:                  $gray-600 !default;
 
 $colors: (
@@ -88,7 +88,7 @@ $theme-colors: (
   light:                          $gray-100,
   cyan:                           $cyan,
   dark:                           $gray-800,
-  purple:                         $purple    
+  purple:                         $purple
 );
 
 // Options
@@ -119,7 +119,7 @@ $grid-gutter-width:         20px !default;
 // Font, line-height, and color for body text, headings, and more.
 
 $font-size-base:              0.875rem;
-$font-family-sans-serif:     'Poppins', sans-serif !default; 
+$font-family-sans-serif:     'Poppins', sans-serif !default;
 
 
 $font-weight-light:           300 !default;

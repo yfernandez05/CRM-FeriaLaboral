@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cliente;
-use App\Models\Empleo;
-use App\Models\Empresa;
-use App\Util\LogErrorManager;
-use App\Util\ResultManager;
-use App\Util\RuleManager;
 use Exception;
-use Illuminate\Database\QueryException;
+use App\Models\Empleo;
+use Carbon\Carbon;
+use App\Models\Cliente;
+use App\Models\Empresa;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Util\RuleManager;
+use App\Util\ResultManager;
 use Illuminate\Http\Request;
+use App\Util\LogErrorManager;
+use App\Exports\plantillaEmpleo;
+use Illuminate\Database\QueryException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class EmpleoController extends BaseController
 {
@@ -156,5 +160,22 @@ class EmpleoController extends BaseController
         $empleo->fecha_cierre = $request->fecha_cierre;
 
         return $empleo;
+    }
+
+    public function descargarplantilla(Request $request)
+    {
+        try {
+            $name = 'plantillaEmpleo[' . Carbon::now('America/Lima')->format('d-m-Y H:i:s') . ' ].xlsx';
+            return Excel::download(new plantillaEmpleo($request), $name);
+
+        } catch (QueryException $e) {
+            LogErrorManager::saveInDB($this, __FUNCTION__, $e);
+
+            throw new HttpException(500);
+        } catch (Exception $e) {
+            LogErrorManager::saveInDB($this, __FUNCTION__, $e);
+
+            throw new HttpException(500);
+        }
     }
 }

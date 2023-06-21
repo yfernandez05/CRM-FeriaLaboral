@@ -76,7 +76,7 @@
                 }else
                     this.fileName = '';
             },
-            importarExcel() {                
+            importarExcel() {
                 let vm = this;
 
                 if (this.$refs.fileexcel.files[0]) {
@@ -102,7 +102,7 @@
                                 successMessage(result.message, appName);
                                 vm.showModal = false;
                                 vm.fileName = '';
-                                vm.$parent.listarImportaciones(); 
+                                vm.$parent.listarImportaciones();
                             } else
                                 errorMessage(result.message, appName);
                         })
@@ -111,7 +111,7 @@
                             errorMessage(appErrorMessage, appName);
                             console.log(error);
                         })
-                    }  
+                    }
 
                 }else{
                     warningMessage('Seleccione un archivo Excel', appName);
@@ -119,7 +119,7 @@
             },
 
             buscarEvento(){
-                this.cliente.idevento = 0; 
+                this.cliente.idevento = 0;
                 this.eventos = [];
 
                 let vm = this;
@@ -129,9 +129,9 @@
                     /* if (response.data == null || response.data == '') {
                         warningMessage(`Esta campaña no tiene ningun evento`, appName);
                     } */
-                    
+
                     vm.eventos = response.data;
-                    
+
                 })
                 .catch(function (error) {
                     errorMessage(appErrorMessage, appName);

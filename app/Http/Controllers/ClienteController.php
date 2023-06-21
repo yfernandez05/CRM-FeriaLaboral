@@ -35,7 +35,7 @@ class ClienteController extends BaseController
     public function index(Request $request)
     {
         $filters = $this->getFilters($request, new Cliente());
-        //agregamos el modelo EVENTO adicionales en cliente + evento, hace el filtro de busqueda en Cliente + Evento 
+        //agregamos el modelo EVENTO adicionales en cliente + evento, hace el filtro de busqueda en Cliente + Evento
         $filtersEvento = $this->getFilters($request, new EventoCliente());
         $filterCampania = $this->getFilters($request, new Campania());
         $perpage = $this->getLimitPagination($request);
@@ -47,7 +47,7 @@ class ClienteController extends BaseController
             //agregamos filtro adicionales
             ->whereHas('eventoCliente', function ($query) use ($filtersEvento) {
                 $query->where($filtersEvento);
-            }) /* 
+            }) /*
             ->whereHas('evento')  */;
 
             if ($this->user->idcuenta != RuleManager::SYSTEM_COMPANY_ACCOUNT || !in_array($this->user->idrol, RuleManager::ADMINISTRATORS_ACCESS)) {
@@ -56,17 +56,17 @@ class ClienteController extends BaseController
                     $query->where('idcuenta', '=', $this->user->idcuenta);
                 });
             }
-    
+
             if ($request->exists('fechadesde')) {
                 $fechadesde = Carbon::createFromFormat('d-m-Y', $request->fechadesde)->toDateString();
                 $querycliente->whereDate('fecharegistro', '>=', $fechadesde);
             }
-    
+
             if ($request->exists('fechahasta')) {
                 $fechahasta = Carbon::createFromFormat('d-m-Y', $request->fechahasta)->toDateString();
                 $querycliente->whereDate('fecharegistro', '<=', $fechahasta);
             }
-    
+
             $cliente = $querycliente->orderBy('idcliente', 'DESC')
             ->paginate($perpage);
 
@@ -74,7 +74,7 @@ class ClienteController extends BaseController
 
         $querycliente = Cliente::where($filters)
             ->with('eventoCliente','campania','distrito','files','perfil'/* ,'empleo' */,'empleosPostulados')
-            //agregamos filtro adicionales            
+            //agregamos filtro adicionales
             ->whereHas('campania', function ($query) use ($filterCampania) {
                 $query->where($filterCampania);
             });
@@ -88,22 +88,22 @@ class ClienteController extends BaseController
                     ->whereHas('empleosPostulados', function ($query) {
                         $query->where('idempresa', '=', $this->user->idempresa);
                     });
-                })
-                ->with(['empleosPostulados' => function ($query) {
-                    $query->where('idempresa', $this->user->idempresa);
-                }]);
+                });
+                // ->with(['empleosPostulados' => function ($query) {
+                //     $query->where('idempresa', $this->user->idempresa);
+                // }]);
             }
-    
+
             if ($request->exists('fechadesde')) {
                 $fechadesde = Carbon::createFromFormat('d-m-Y', $request->fechadesde)->toDateString();
                 $querycliente->whereDate('fecharegistro', '>=', $fechadesde);
             }
-    
+
             if ($request->exists('fechahasta')) {
                 $fechahasta = Carbon::createFromFormat('d-m-Y', $request->fechahasta)->toDateString();
                 $querycliente->whereDate('fecharegistro', '<=', $fechahasta);
             }
-    
+
             $cliente = $querycliente->orderBy('idcliente', 'DESC')
             /*Cmbiar momentaneo*/
             //->where('idcampania','=',10)
@@ -322,7 +322,7 @@ class ClienteController extends BaseController
         try {
             $name = 'postulantes[' . Carbon::now('America/Lima')->format('d-m-Y H:i:s') . ' ].xlsx';
             return Excel::download(new ClientesExport($request), $name);
-            
+
         } catch (QueryException $e) {
             LogErrorManager::saveInDB($this, __FUNCTION__, $e);
 
@@ -339,7 +339,7 @@ class ClienteController extends BaseController
         try {
             $name = 'plantillaClientes[' . Carbon::now('America/Lima')->format('d-m-Y H:i:s') . ' ].xlsx';
             return Excel::download(new plantillaCliente($request), $name);
-            
+
         } catch (QueryException $e) {
             LogErrorManager::saveInDB($this, __FUNCTION__, $e);
 
@@ -361,7 +361,7 @@ class ClienteController extends BaseController
 
     /* public function saveclienteevent(Request $request){
         $result = $request[0];
-        $clienteid = Cliente::where([['idcampania',9],['estado','A']])->find(304);        
+        $clienteid = Cliente::where([['idcampania',9],['estado','A']])->find(304);
         return $clienteid;
     } */
 }

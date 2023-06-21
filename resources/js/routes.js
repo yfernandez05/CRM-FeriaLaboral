@@ -9,7 +9,7 @@ window.intranetBaseUrl = '/crm';
 export default new VueRouter({
     mode: 'history',
     routes:[
-        { 
+        {
             path: intranetBaseUrl,
             name: 'spa',
             component: require('./components/dashboard/DashboardIndex').default
@@ -77,7 +77,7 @@ export default new VueRouter({
         {
             path: `${intranetBaseUrl}/evento`,
             name: 'spa.evento',
-            component: require('./components/evento/Eventoindex').default 
+            component: require('./components/evento/Eventoindex').default
         },
         {
             path: `${intranetBaseUrl}/evento/registrar`,
@@ -92,7 +92,7 @@ export default new VueRouter({
         {
             path: `${intranetBaseUrl}/tipoEvento`,
             name: 'spa.tipoEvento',
-            component: require('./components/tipoevento/TipoEventoIndex').default 
+            component: require('./components/tipoevento/TipoEventoIndex').default
         },
         {
             path: `${intranetBaseUrl}/tipoEvento/registrar`,
@@ -107,17 +107,17 @@ export default new VueRouter({
         {
             path: `${intranetBaseUrl}/alerta`,
             name: 'spa.alerta',
-            component: require('./components/alerta/AlertaIndex').default 
+            component: require('./components/alerta/AlertaIndex').default
         },
         {
             path: `${intranetBaseUrl}/alerta/registrar`,
             name: 'spa.alerta.registrar',
-            component: require('./components/alerta/AlertaCreate').default 
+            component: require('./components/alerta/AlertaCreate').default
         },
         {
             path: `${intranetBaseUrl}/alerta/editar/:id`,
             name: 'spa.alerta.editar',
-            component: require('./components/alerta/AlertaEdit').default 
+            component: require('./components/alerta/AlertaEdit').default
         },
         {
             path: `${intranetBaseUrl}/cliente`,
@@ -193,6 +193,11 @@ export default new VueRouter({
             path: `${intranetBaseUrl}/import`,
             name: 'spa.import',
             component: require('./components/basedatos/ImportBDIndex').default
+        },
+        {
+            path: `${intranetBaseUrl}/importempleo`,
+            name: 'spa.importempleo',
+            component: require('./components/basedatos/ImportEmpresaBDIndex').default
         },
         {
             path: `${intranetBaseUrl}/administrarcliente`,

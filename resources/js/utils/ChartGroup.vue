@@ -31,7 +31,7 @@ export default {
 
 <style scoped>
  .card-actions a{
-     color: #eb7b3d;
+     color: #e91a30;
      font-size: 1.15em;
      font-weight: bold;
  }

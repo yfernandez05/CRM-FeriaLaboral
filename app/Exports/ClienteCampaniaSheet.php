@@ -2,17 +2,19 @@
 
 namespace App\Exports;
 
-use App\Models\Campania;
-use App\Models\Cliente;
-use App\Util\FilterManager;
 use Carbon\Carbon;
+use App\Models\Cliente;
+use App\Models\Campania;
+use App\Util\RuleManager;
+use App\Util\FilterManager;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize, WithMapping, WithHeadings, WithTitle
@@ -26,16 +28,31 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
     */
     public function collection()
     {
+        $userlogeo = Auth::user();
         $filters = FilterManager::getFilters($this->request, new Cliente());
         $filtersCampania = FilterManager::getFilters($this->request, new Campania());
         $consultas =  Cliente::where($filters)
-        ->with('eventoCliente','campania','distrito')
-        /*Cmbiar momentaneo*/
-        //->where('idcampania','=',10)
-        
-        ->whereHas('campania', function ($query) use ($filtersCampania) {
-            $query->where($filtersCampania);
-        });
+        ->with('eventoCliente','campania','distrito','empleosPostulados');
+        // ->whereHas('campania', function ($query) use ($filterCampania) {
+        //     $query->where($filterCampania);
+        // })
+
+
+            // Filtro para usuarios que no son administradores
+
+        if ($userlogeo->idcuenta != RuleManager::SYSTEM_COMPANY_ACCOUNT || !in_array($userlogeo->idrol, RuleManager::ADMINISTRATORS_ACCESS)) {
+             //dd($userlogeo->idcuenta);
+            // Filtro para usuarios que no son administradores
+            $consultas->where(function ($query) use ($userlogeo) {
+                $query->whereHas('campania', function ($query) use ($userlogeo) {
+                    $query->where('idcuenta', '=', $userlogeo->idcuenta);
+                })
+                ->whereHas('empleosPostulados', function ($query) use ($userlogeo) {
+                    $query->where('idempresa', '=', $userlogeo->idempresa);
+                });
+            });
+
+        }
 
          //filtro de fechas input buscar por fechas
          if ($this->request->exists('fechadesde')) {
@@ -45,9 +62,14 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
         if ($this->request->exists('fechahasta')) {
             $fechahasta = Carbon::createFromFormat('d-m-Y', $this->request->fechahasta)->toDateString();
             $consultas->whereDate('fecharegistro', '<=', $fechahasta); //pasasmos como consulta el campos fecharegistro
-        } 
-        
+        }
+
+
+        // dump( $consultas->whereHas('campania', function ($query) use ($userlogeo) {
+        //     $query->where('idcuenta','=',$userlogeo->idcuenta);
+        // }));
         return $consultas
+
         ->orderBy('idcliente', 'DESC')
         ->get();
         //return Cliente::all();
@@ -57,20 +79,28 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
     * @var Invoice $invoice
     */
     public function map($model): array
-    {        
+    {
+        $empPost='';
+       foreach( $model->empleosPostulados as $item ){
+            $empPost = $empPost .','. $item->titulo;
+        }
+        dump($empPost);
 
+
+
+        //dump($empPost);
         return [
             $model->idcliente,
             $model->nombres,
             $model->apellidos,
             $model->email,
             $model->telefono,
-            $model->dni,            
-            // $model->fecharegistro,
+            $model->dni,
+            $empPost,
             $model->fecha,
             $model->asistencianame,
             $model->fechapresencia,
-            // $model->coddistrito,            
+            // $model->coddistrito,
             $model->carrera,
             $model->tipoparticipante,
             $model->edad,
@@ -88,7 +118,7 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
             $model->statename,
             $model->idcampania,
             $model->campania->nombrecampania,
-            //$model->eventoCliente->evento['nombreevento'],
+           // $model->eventoCliente->evento['nombreevento'],
             $model->distrito->nombreubigeo,
         ];
         //return dd($model);
@@ -103,12 +133,13 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
             'Email',
             'Telefono',
             'Dni',
+            'empleos_postulados',
             // 'fecharegistro',
             'Fecha Registro',
             'Asistencia',
             'Fecha Asistencia',
-            // 'coddistrito',            
-            'Carrera',            
+            // 'coddistrito',
+            'Carrera',
             'Tipoparticipante',
             'Edad',
             'Grado',
@@ -137,9 +168,9 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
         return [
            1    => [
                'font' => [
-                   'bold' => true,                   
-               ],          
-           ],                
+                   'bold' => true,
+               ],
+           ],
         ];
     }
 

@@ -36,13 +36,14 @@ Route::prefix('rest')->name('rest.')->group(function () {
     Route::resource('rol', 'RolController')->except(['show', 'create']);
 
     Route::get('cuenta/select', 'CuentaController@select')->name('cuenta.select');
-    Route::resource('cuenta', 'CuentaController')->except(['show', 'create']);   
+    Route::resource('cuenta', 'CuentaController')->except(['show', 'create']);
     Route::get('campania/select', 'CampaniaController@select')->name('campania.select');
     Route::resource('campania', 'CampaniaController')->except(['show', 'create']);
 
-    Route::resource('empresa', 'EmpresaController');  
+    Route::resource('empresa', 'EmpresaController');
 
-    Route::resource('empleo', 'EmpleoController');   
+    Route::get('empleo/descargarplantilla', 'EmpleoController@descargarplantilla')->name('empleo.descargarplantilla');
+    Route::resource('empleo', 'EmpleoController');
 
     Route::get('evento/getevento', 'EventoController@getevento')->name('evento.getevento');
     Route::resource('evento', 'EventoController')->except(['edit', 'create']);
@@ -66,7 +67,7 @@ Route::prefix('rest')->name('rest.')->group(function () {
     Route::resource('cliente', 'ClienteController')->except(['show', 'create']);
 
     Route::resource('clienteevento', 'EventoClienteController');
-    
+
     Route::get('ubigeo/index', 'UbigeoController@index')->name('ubigeo.index');
     Route::get('ubigeo/departamentos', 'UbigeoController@departamentos')->name('ubigeo.departamentos');
     Route::get('ubigeo/provincias', 'UbigeoController@provincias')->name('ubigeo.provincias');
@@ -74,19 +75,20 @@ Route::prefix('rest')->name('rest.')->group(function () {
     Route::get('ubigeo/distritosleccionados', 'UbigeoController@distritosleccionados')->name('ubigeo.distritosleccionados');
 
     Route::get('tipoAtencion/select', 'TipoAtencionController@select')->name('tipoAtencion.select');
-    Route::resource('tipoAtencion', 'TipoAtencionController')->except(['show', 'create']);  
+    Route::resource('tipoAtencion', 'TipoAtencionController')->except(['show', 'create']);
 
     /* Route::get('tipoconfirmacion/select', 'TipoConfirmacionController@select');
-    Route::resource('tipoconfirmacion', 'TipoConfirmacionController');  */ 
-    
+    Route::resource('tipoconfirmacion', 'TipoConfirmacionController');  */
+
     Route::get('atencion/detail/{id}', 'AtencionController@detail')->name('tipoAtencion.detail');
-    Route::resource('atencion', 'AtencionController')->except(['show', 'create']);  
+    Route::resource('atencion', 'AtencionController')->except(['show', 'create']);
 
     Route::get('atencioninstitucion/detail/{id}', 'AtencionInstitucionController@detail');
-    Route::resource('atencioninstitucion', 'AtencionInstitucionController');  
-    
+    Route::resource('atencioninstitucion', 'AtencionInstitucionController');
+
     Route::post('import/saveInstitucion', 'ImportacionController@saveInstitucion');
-    Route::resource('import', 'ImportacionController')->except(['show', 'create']);  
+    Route::post('import/saveEmpleo', 'ImportacionController@saveEmpleo');
+    Route::resource('import', 'ImportacionController')->except(['show', 'create']);
     Route::resource('logerror', 'LogErrorController')->except(['show', 'create']);
 
     Route::get('reporte/cantidadclientesevento','ReporteController@cantidadclientesevento');
@@ -106,10 +108,10 @@ Route::prefix('rest')->name('rest.')->group(function () {
 
     Route::post('sala/physicallyRemove', 'SalaController@physicallyRemove')->name('sala.physicallyRemove');
     Route::resource('sala', 'SalaController');
-    
+
     Route::post('moderador/physicallyremove', 'ModeradorController@physicallyRemove')->name('moderador.physicallyremove');
     Route::resource('moderador', 'ModeradorController');
 
     Route::resource('conexionsocket','ConexionSocketController');
-    
+
 });
