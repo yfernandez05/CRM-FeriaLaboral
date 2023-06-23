@@ -34,7 +34,7 @@ class Files extends Model
     protected $appends = [
         'isactive',
         'statename',
-        'fecharegistro',
+        'fecha',
     ];
 
     public function getIsactiveAttribute(){
@@ -50,7 +50,7 @@ class Files extends Model
         return $this->belongsTo(Cliente::class, 'idcliente');
     }
     
-    public function getFecharegistroAttribute()
+    public function getFechaAttribute()
     {
         return optional($this->fecharegistro)->format('d-m-Y');
     }
