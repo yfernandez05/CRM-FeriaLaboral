@@ -4,7 +4,131 @@
             Postulante #{{cliente.idcliente}}
         </template>
         <template v-slot:modal-body-main>
-            <div class="form-row">
+            <div class="row">
+                <div class="col-md-12 mt-1">
+                    <ul id="tabs" class="nav nav-tabs">
+                        <li class="nav-item"><a href="" data-target="#home1" data-toggle="tab" class="nav-link small text-uppercase active">Perfil Postulante</a></li>
+                        <li class="nav-item"><a href="" data-target="#profile1" data-toggle="tab" class="nav-link small text-uppercase">Educación</a></li>
+                        <li class="nav-item"><a href="" data-target="#messages1" data-toggle="tab" class="nav-link small text-uppercase">Experiencias</a></li>
+                    </ul>
+                    <br>
+                    <div id="tabsContent" class="tab-content">
+                        <div id="home1" class="tab-pane fade active show">
+                            <div class="form-row">                
+                                <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
+                                    <label class="mb-0">Fecha Registro</label>
+                                    <span class="form-control form-control-sm d-block text-truncate text-muted"
+                                        v-text="cliente.fecha"></span>
+                                </div>
+                                <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
+                                    <label class="mb-0">Nombres</label>
+                                    <span class="form-control form-control-sm d-block text-truncate text-muted"
+                                        v-text="cliente.nombres"></span>
+                                </div>
+                                <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
+                                    <label class="mb-0">Apellidos</label>
+                                    <span class="form-control form-control-sm d-block text-truncate text-muted"
+                                        v-text="cliente.apellidos"></span>
+                                </div>
+                                <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
+                                    <label class="mb-0">Email</label>
+                                    <span class="form-control form-control-sm d-block text-truncate text-muted"
+                                        v-text="cliente.email"></span>
+                                </div>
+                                <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
+                                    <label class="mb-0">Telefono</label>
+                                    <span class="form-control form-control-sm d-block text-truncate text-muted"
+                                        v-text="cliente.telefono"></span>
+                                </div>
+                                <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
+                                    <label class="mb-0">Dni</label>
+                                    <span class="form-control form-control-sm d-block text-truncate text-muted"
+                                        v-text="cliente.dni"></span>
+                                </div>
+                                <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
+                                    <label class="mb-0">Dirección</label>
+                                    <span class="form-control form-control-sm d-block text-truncate text-muted"
+                                        v-text="cliente.direccion"></span>
+                                </div>                
+                                <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
+                                    <label class="mb-0">Labora en la Empresa </label>
+                                    <span class="form-control form-control-sm d-block text-truncate text-muted"
+                                        v-text="cliente.empresaactual"></span>
+                                </div>
+                                <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
+                                    <label class="mb-0">Cargo Actual</label>
+                                    <span class="form-control form-control-sm d-block text-truncate text-muted"
+                                        v-text="cliente.cargoactual"></span>
+                                </div>
+                                <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-6">
+                                    <label class="mb-0">Currículum Vitae</label>
+                                    <div class="d-flex align-items-center">
+                                        <template v-if="hasFiles">
+                                            <div class="btn-group" role="group">
+                                                <a :href="cliente.files[0].url_patch" class="btn btn-primary" target="_blank">
+                                                <i class="fas fa-eye"></i> Visualizar
+                                                </a>
+                                                <a :href="cliente.files[0].url_patch" class="btn btn-success" download>
+                                                <i class="fas fa-download"></i> Descargar
+                                                </a>
+                                            </div>
+                                        </template>
+                                        <template v-else>
+                                            <div class="alert alert-info py-1" role="alert">
+                                                Aún no ha subido un currículum vitae.
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="form-group form-group-sm col-12">
+                                    <label class="mb-0">Más detalles</label>
+                                    <textarea class="form-control form-control-sm d-block  text-muted" rows="2" v-text="cliente.descripcion"></textarea>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div id="profile1" class="tab-pane fade ">
+                            <div class="form-row">                
+                                <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
+                                    <label class="mb-0">Fecha Registro</label>
+                                    <span class="form-control form-control-sm d-block text-truncate text-muted"
+                                        v-text="cliente.fecha"></span>
+                                </div>
+                                <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
+                                    <label class="mb-0">Nombres</label>
+                                    <span class="form-control form-control-sm d-block text-truncate text-muted"
+                                        v-text="cliente.nombres"></span>
+                                </div>
+                                <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
+                                    <label class="mb-0">Apellidos</label>
+                                    <span class="form-control form-control-sm d-block text-truncate text-muted"
+                                        v-text="cliente.apellidos"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="messages1" class="tab-pane fade">
+                            <div class="form-row">                
+                                <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
+                                    <label class="mb-0">Fecha Registro</label>
+                                    <span class="form-control form-control-sm d-block text-truncate text-muted"
+                                        v-text="cliente.fecha"></span>
+                                </div>
+                                <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
+                                    <label class="mb-0">Nombres</label>
+                                    <span class="form-control form-control-sm d-block text-truncate text-muted"
+                                        v-text="cliente.nombres"></span>
+                                </div>
+                                <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
+                                    <label class="mb-0">Apellidos</label>
+                                    <span class="form-control form-control-sm d-block text-truncate text-muted"
+                                        v-text="cliente.apellidos"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="form-row">
                 
                 <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
                     <label class="mb-0">Fecha Registro</label>
@@ -40,7 +164,7 @@
                     <label class="mb-0">Dirección</label>
                     <span class="form-control form-control-sm d-block text-truncate text-muted"
                         v-text="cliente.direccion"></span>
-                </div>
+                </div>                
                 <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
                     <label class="mb-0">Labora en la Empresa </label>
                     <span class="form-control form-control-sm d-block text-truncate text-muted"
@@ -51,11 +175,32 @@
                     <span class="form-control form-control-sm d-block text-truncate text-muted"
                         v-text="cliente.cargoactual"></span>
                 </div>
+                <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-6">
+                    <label class="mb-0">Currículum Vitae</label>
+                    <div class="d-flex align-items-center">
+                        <template v-if="hasFiles">
+                            <div class="btn-group" role="group">
+                                <a :href="cliente.files[0].url_patch" class="btn btn-primary" target="_blank">
+                                <i class="fas fa-eye"></i> Visualizar
+                                </a>
+                                <a :href="cliente.files[0].url_patch" class="btn btn-success" download>
+                                <i class="fas fa-download"></i> Descargar
+                                </a>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <div class="alert alert-info py-1" role="alert">
+                                Aún no ha subido un currículum vitae.
+                            </div>
+                        </template>
+                    </div>
+                </div>
                 <div class="form-group form-group-sm col-12">
                     <label class="mb-0">Más detalles</label>
                     <textarea class="form-control form-control-sm d-block  text-muted" rows="2" v-text="cliente.descripcion"></textarea>
                 </div>
-            </div>
+                
+            </div> -->
 
             <div class="table-responsive">
                 <table id="productos" class="table table-sm table-hover table-striped table-bordered mb-2">
@@ -132,6 +277,11 @@ export default {
                 errorMessage(appErrorMessage, appName);
                 //console.log(error);
             })
+        }
+    },
+    computed: {
+        hasFiles() {
+            return this.cliente.files.length > 0;
         }
     },
 

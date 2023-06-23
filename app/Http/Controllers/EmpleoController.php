@@ -32,7 +32,7 @@ class EmpleoController extends BaseController
             ->with('empresa');
 
         // Verificar si el usuario tiene el rol y el idempresa específicos
-        if ($this->user->idrol === 6) {
+        if ($this->user->idrol === '6') {
             $query->where('idempresa', $this->user->idempresa);
         }
 

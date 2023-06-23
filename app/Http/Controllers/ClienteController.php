@@ -88,10 +88,10 @@ class ClienteController extends BaseController
                     ->whereHas('empleosPostulados', function ($query) {
                         $query->where('idempresa', '=', $this->user->idempresa);
                     });
-                });
-                // ->with(['empleosPostulados' => function ($query) {
-                //     $query->where('idempresa', $this->user->idempresa);
-                // }]);
+                })
+                ->with(['empleosPostulados' => function ($query) {
+                    $query->where('idempresa', $this->user->idempresa);
+                }]);
             }
 
             if ($request->exists('fechadesde')) {
