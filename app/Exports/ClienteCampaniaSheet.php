@@ -50,7 +50,10 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
                 ->whereHas('empleosPostulados', function ($query) use ($userlogeo) {
                     $query->where('idempresa', '=', $userlogeo->idempresa);
                 });
-            });
+            })
+             ->with(['empleosPostulados' => function ($query) use ($userlogeo) {
+            $query->where('idempresa', $userlogeo->idempresa);
+             }]);
 
         }
 
