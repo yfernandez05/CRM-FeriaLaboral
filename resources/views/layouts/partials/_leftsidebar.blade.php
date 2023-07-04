@@ -63,6 +63,9 @@
                         <li><router-link :to="{name: 'spa.campania'}">Campañas</router-link></li>
                         <li><router-link :to="{name: 'spa.evento'}">Eventos</router-link></li>
                         <li><router-link :to="{name: 'spa.alerta'}">Alertas</router-link></li>
+                        <li><router-link :to="{name: 'spa.carrera'}">Carreras</router-link></li>
+                        <li><router-link :to="{name: 'spa.ciclo'}">Ciclos</router-link></li>
+                        <li><router-link :to="{name: 'spa.experiencia'}">Experiencias</router-link></li>
                     </ul>
                 </li>
                 <!-- <li>

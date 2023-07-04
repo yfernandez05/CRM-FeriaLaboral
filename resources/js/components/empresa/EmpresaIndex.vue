@@ -62,7 +62,12 @@
                     <tbody>
                         <tr v-for="emp in empresas" :key="emp.idempresa">
                             <td>
-                                <row-actions :rowData="emp" @rowItemActions="rowItemActions">
+                                <row-actions :rowData="emp" @rowItemActions="rowItemActions" :activeDelete="false">
+                                    <button type="button" :title="emp.isactive ? 'Eliminar':'Restaurar'" @click="cambiarEstado(emp)"
+                                            class="btn btn-sm  waves-effect waves-light border-0 mr-1"
+                                            :class="emp.isactive ? 'btn-outline-danger':'btn-outline-success'">
+                                        <i class="fas fa-lg" :class="emp.isactive ? 'fa-trash':'fa-check-circle'"></i>
+                                    </button>
                                 </row-actions>
                             </td>
                             <td v-text="emp.idempresa"></td>
@@ -169,29 +174,35 @@
 
                 this.listarEmpresa();  
             },
-            eliminarRol(param){
+            cambiarEstado(param) {
                 let vm = this;
+                
+                let optionMessage ='Eliminar';
 
-                if(!param.isactive) {
-                    warningMessage(appRecordIsDeletedMessage, appName);
-                    return;
-                }
+                if(!param.isactive) optionMessage = 'Restaurar';
 
-                swalAlertConfirm(`¿Seguro que quiere eliminar la empresa <b>${param.empresa}</b>?`, appName)
-                    .then(function(optionSelected){
-                        if(optionSelected.value){
-                            
+
+                swalAlertConfirm(`¿Seguro que quiere ${optionMessage} la empresa <b>${param.empresa}</b>?`, appName)
+                    .then(function (optionSelected) {
+
+                        if (optionSelected.value) {
+
                             showPreloader();
                             axios.delete(`${appApiUrl}/empresa/${param.idempresa}`)
-                                .then(function (response) {         
+                                .then(function (response) {
                                     hidePreloader();
                                     let result = response.data;
 
                                     if (result.status) {
                                         successMessage(result.message, appName);
                                         vm.listarEmpresa();
-                                    } else
+                                    }  else if (result.warning){
+                                        warningMessage(result.message, appName);
+                                        vm.listarEmpresa();
+                                    } else{
                                         errorMessage(result.message, appName);
+                                    }
+
                                 })
                                 .catch(function (error) {
                                     hidePreloader();
@@ -199,8 +210,10 @@
                                     console.log(error);
                                 });
                         }
+
+
                     });
-            },             
+            },              
             limpiarFiltroEmpresa(){
                 this.empresa.empresa = '';
                 this.empresa.ruc = '';

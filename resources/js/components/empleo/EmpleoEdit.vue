@@ -37,6 +37,7 @@
                             this.backToList();
                         }
                         vm.empleo = response.data;
+                        /* vm.empleo.carreras.map(carrera => carrera.idcarrera); */
 
                         if(!vm.empleo.isactive){
                             warningMessage(appCannotDeleteMessage, appName);

@@ -15,8 +15,9 @@
                     <label>Ruc <small class="text-danger">(*)</small></label>
                     <vue-numeric class="form-control" ref="ruc" 
                         @keypress.native.enter.prevent="doSaveData"
-                        thousand-separator="" v-model="empresa.ruc" v-bind:precision="0" >
+                        thousand-separator="" v-model="empresa.ruc" inputmode="numeric" >
                     </vue-numeric>
+
                     <small class="form-control-feedback" v-if="errorExists('ruc')" v-text="showError('ruc').errorDetail"></small>
                 </div>
                 <div class="form-group col-12 col-sm-6 col-md-4" :class="{'has-danger':errorExists('razonsocial')}">
@@ -118,11 +119,6 @@
             },
             showError(keyModel){
                 return this.errors.find(err => err.keyModel === keyModel);
-            },
-            formatDate (value, fmt = 'D MMM YYYY') {
-                return (value == null)
-                    ? ''
-                    : moment(value, 'YYYY-MM-DD HH:mm:ss').format(fmt)
             },
         },
         mounted(){

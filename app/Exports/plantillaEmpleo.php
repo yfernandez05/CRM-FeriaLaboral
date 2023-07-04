@@ -16,16 +16,20 @@ class plantillaEmpleo implements WithHeadings, WithStyles, ShouldAutoSize
     public function headings(): array
     {
         $cabecera = [
-            'Nombre Empleo',
-            'Requerimiento ',
+            'Cargo',
+            'Requerimiento',
+            'Beneficios',
             'Descripción',
+            'Vacantes',
 
         ];
 
         $guia = [
             'Administracion',
             'Lorem Ipsum is of the printing and typesetting industry. Lorem Ipsum has been the industry',
-            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry of the printing and typesetting industry. Lorem Ipsum has been the industry',
+            'Lorem Ipsum is of the printing and typesetting industry.',
+            'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+            '10',
         ];
 
         return array($cabecera,$guia);
@@ -42,7 +46,13 @@ class plantillaEmpleo implements WithHeadings, WithStyles, ShouldAutoSize
                 ],
                 'fill' => [
                     'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                    'color' => ['argb' => '00b7bd'],
+                    'color' => ['argb' => 'fb0034'],
+                ],
+            ],
+
+            'E' => [
+                'numberFormat' => [
+                    'formatCode' => \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER,
                 ],
             ],
          ];

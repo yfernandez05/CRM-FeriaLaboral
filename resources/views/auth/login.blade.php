@@ -47,7 +47,7 @@
     <div class="form-group text-center m-t-20">
         <div class="col-xs-12">
             <button class="btn c-melon btn-lg btn-block text-uppercase btn-rounded" type="submit">
-                {{ __('Login') }}
+                {{ __('INGRESAR') }}
             </button>
         </div>
     </div>

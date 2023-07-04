@@ -7,6 +7,7 @@ use App\Models\Files;
 use App\Models\Perfil;
 use App\Models\Campania;
 use App\Models\Empleo;
+use App\Models\Estudio;
 use App\Models\ClienteEmpleo;
 use App\Util\RuleManager;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +27,8 @@ class Cliente extends Model
             //'idevento',
             'descripcion',
             'direccion',
+            'minsalarial',
+            'maxsalarial',
             'empresaactual',
             'cargoactual',
             'idcampania',
@@ -119,7 +122,7 @@ class Cliente extends Model
         ->select('cliente_empleo.idcliente_empleo', 'cliente_empleo.fecha', 'empleos.id', 'empleos.idempresa', 'empleos.titulo', 'empleos.estado')
         //->withPivot('fecha')
         //->where('idempresa', 1)
-        ->with('empresa');
+        ->with('empresa','carreras');
     }
 
     //para mostrar el nombre y ya no el id en el listado 
@@ -128,16 +131,6 @@ class Cliente extends Model
             ->with('cuenta');
             //->with('evento','cuenta');
     }
-    /* public function empleo(){
-        return $this->belongsTo(Empleo::class, 'idempleo', 'id')
-        ->withDefault([
-            'titulo' => '',
-            'empresa'=>[                    
-                'empresa' => '',
-            ],
-        ])
-        ->with('empresa');
-    } */
     
     public function evento(){
         return $this->belongsTo(evento::class, 'idevento', 'idevento')
@@ -195,6 +188,11 @@ class Cliente extends Model
             ])
             ->with('tipoatencion')
             ->orderBy('idatencion', 'desc');
+    }
+
+    public function estudios()
+    {
+        return $this->hasMany(Estudio::class, 'idcliente');
     }
     
     

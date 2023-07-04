@@ -4,6 +4,13 @@
             Empleo
         </template>
         <template v-slot:card-header-actions>
+            <button class="btn btn-sm btn-green waves-effect waves-light" @click="descargarExcel()">
+                <i class="fas fa-file-excel"></i>
+                <span class="d-none d-sm-inline-block">
+                    Descargar
+                </span>
+            </button>
+            <i class="fas fa-grip-lines-vertical text-white px-3"></i>
             <button class="btn btn-sm btn-info waves-effect waves-light" @click="buscarEmpleo()">
                 <i class="fas fa-search"></i>
                 <span class="d-none d-sm-inline-block">
@@ -26,13 +33,20 @@
         <template v-slot:card-body-main>
             <div class="form-row">
                 <div class="form-group col-12 col-sm-6 col-md-4 ">
-                    <label>Empleo</label>
+                    <label>Cargo</label>
                     <input type="text" class="form-control" v-model="empleo.titulo" @keyup.enter="buscarEmpleo()">
                 </div>
-                <!-- <div class="form-group col-12 col-sm-6 col-md-4 ">
-                    <label>Ruc</label>
-                    <input type="text" class="form-control" v-model="empleo.descripcion" @keyup.enter="buscarEmpleo()">
-                </div> -->
+                <div class="form-group col-12 col-sm-6 col-md-4 col-xl-3 ">
+                    <label>Fecha</label>
+                    <v-date-picker v-model="empleo.fecha_publicacion" range lang="es" format="DD-MM-YYYY" confirm
+                        :editable="false" placeholder="Seleccione un rango de fecha" @input="buscarEmpleo()">
+                        <template v-slot:footer="{ emit }">
+                            <button class="mx-btn" @click="selectToday(emit)">
+                                Hoy
+                            </button>
+                        </template>
+                    </v-date-picker>
+                </div>                
                 <div class="form-group col-12 col-sm-6 col-md-4 ">
                     <label>&nbsp;</label>
                     <div class="custom-control custom-checkbox">
@@ -49,11 +63,17 @@
                         <tr>
                             <th class="p-2">Acciones</th>
                             <th class="p-2">Cod</th>
-                            <th class="p-2">Empleo</th>
-                            <th class="p-2 text-nowrap">Requisitos</th>
-                            <th class="p-2">Descripción</th>                            
-                            <th class="p-2">F. Publicación</th>
                             <th class="p-2">Empresa</th>
+                            <th class="p-2">Cargo</th>
+                            <th class="p-2">Descripción</th>                            
+                            <th class="p-2 text-nowrap">Requisitos</th>
+                            <th class="p-2 text-nowrap">Beneficios</th>
+                            <th class="p-2">Carreras</th>
+                            <th class="p-2">Ciclos</th>
+                            <th class="p-2">Experiencia</th>
+                            <th class="p-2">Vacantes</th>
+                            <th class="p-2">Sueldo Promedio</th>
+                            <th class="p-2">F. Publicación</th>                            
                             <!-- <th class="p-2">F. Cierre</th> -->
                             <th class="p-2">Estado</th>
                         </tr>
@@ -62,15 +82,36 @@
                         
                         <tr v-for="emp in empleos" :key="emp.id">
                             <td>
-                                <row-actions :rowData="emp" @rowItemActions="rowItemActions">
+                                <row-actions :rowData="emp" @rowItemActions="rowItemActions" :activeDelete="false">
+                                    <button type="button" :title="emp.isactive ? 'Eliminar':'Restaurar'" @click="cambiarEstado(emp)"
+                                            class="btn btn-sm  waves-effect waves-light border-0 mr-1"
+                                            :class="emp.isactive ? 'btn-outline-danger':'btn-outline-success'">
+                                        <i class="fas fa-lg" :class="emp.isactive ? 'fa-trash':'fa-check-circle'"></i>
+                                    </button>
                                 </row-actions>
                             </td>
                             <td v-text="emp.id"></td>
-                            <td v-text="emp.titulo"></td>
-                            <td v-html="sanitizeHTML(emp.requisitos).slice(0, 25) + '...'"></td>
-                            <td v-html="sanitizeHTML(emp.descripcion).slice(0, 25) + '...'"></td>
-                            <td v-text="emp.fecha_publicacion"></td>
                             <td v-text="emp.empresa.empresa"></td>
+                            <td v-text="emp.titulo"></td>
+                            <td v-html="sanitizeHTML(emp.descripcion).slice(0, 35) + '...'"></td>
+                            <td v-html="sanitizeHTML(emp.requisitos).slice(0, 35) + '...'"></td>
+                            <td>
+                                <template v-if="emp.beneficios !== null">
+                                    <span v-html="sanitizeHTML(emp.beneficios).slice(0, 35) + '...'"></span>
+                                </template>
+                                <template v-else></template>
+                            </td>
+                            <td>                                    
+                                <span class="badge badge-primary py-1 px-3 mb-1" v-for="carrera in emp.carreras" :key="carrera.idcarrera" v-text="carrera.nombre"></span>
+                            </td>
+                            <td>                                
+                                <span class="badge badge-primary py-1 px-3 mb-1" v-for="ciclo in emp.ciclos" :key="ciclo.id" v-text="ciclo.nombre "></span>
+                            </td>
+
+                            <td v-text="emp.experiencia.nombre"></td>
+                            <td v-text="emp.vacantes"></td>
+                            <td>{{ emp.preciopromedio !== null && emp.preciopromedio !== 0 ? emp.preciopromedio : '' }}</td>
+                            <td v-text="emp.fecharegistro"></td>                            
                             <!-- <td v-text="emp.fecha_cierre"></td> -->
                             <td >
                                 <span class="badge badge-pill py-1 px-3" 
@@ -99,6 +140,7 @@
     import VDatePicker from 'vue2-datepicker';
     import 'vue2-datepicker/locale/es';
     import moment,{ now } from 'moment';
+    import qs from 'qs';
 
     export default {
         data() {
@@ -110,6 +152,7 @@
                     titulo: '',
                     descripcion: '',
                     requisitos: '',
+                    fecha_publicacion: '',
                     estado: false
                 }
             }
@@ -170,35 +213,49 @@
                 
                 if (this.empleo.requisitos.length)
                     this.filters.requisitos = this.empleo.requisitos;
+
+                if (this.empleo.fecha_publicacion.length == 2) {
+                    if (this.empleo.fecha_publicacion[0] != null)
+                        this.filters.fechadesde = this.formatDate(this.empleo.fecha_publicacion[0], 'DD-MM-YYYY');
+
+                    if (this.empleo.fecha_publicacion[1] != null)
+                        this.filters.fechahasta = this.formatDate(this.empleo.fecha_publicacion[1], 'DD-MM-YYYY');
+                }
                 
                 if (this.empleo.estado)
                     this.filters.estado = this.empleo.estado;
 
                 this.listarEmpleo();  
             },
-            eliminarEmpleo(param){
+            cambiarEstado(param) {
                 let vm = this;
+                
+                let optionMessage ='Eliminar';
 
-                if(!param.isactive) {
-                    warningMessage(appRecordIsDeletedMessage, appName);
-                    return;
-                }
+                if(!param.isactive) optionMessage = 'Restaurar';
 
-                swalAlertConfirm(`¿Seguro que quiere eliminar la oferta laboral <b>${param.titulo}</b>?`, appName)
-                    .then(function(optionSelected){
-                        if(optionSelected.value){
-                            
+
+                swalAlertConfirm(`¿Seguro que quiere ${optionMessage} el Empleo <b>${param.titulo}</b>?`, appName)
+                    .then(function (optionSelected) {
+
+                        if (optionSelected.value) {
+
                             showPreloader();
                             axios.delete(`${appApiUrl}/empleo/${param.id}`)
-                                .then(function (response) {         
+                                .then(function (response) {
                                     hidePreloader();
                                     let result = response.data;
 
                                     if (result.status) {
                                         successMessage(result.message, appName);
                                         vm.listarEmpleo();
-                                    } else
+                                    }  else if (result.warning){
+                                        warningMessage(result.message, appName);
+                                        vm.listarEmpleo();
+                                    } else{
                                         errorMessage(result.message, appName);
+                                    }
+
                                 })
                                 .catch(function (error) {
                                     hidePreloader();
@@ -206,12 +263,16 @@
                                     console.log(error);
                                 });
                         }
+
+
                     });
-            },             
+            },            
             limpiarFiltroEmpleo(){
                 this.empleo.titulo = '';
                 this.empleo.descripcion = '';
                 this.empleo.requisitos = '';
+                this.empleo.fecha_publicacion = '';
+                this.buscarEmpleo();
             },
             formatDate (value, fmt = 'D MMM YYYY') {
                 return (value == null)
@@ -221,6 +282,13 @@
             selectToday(emit){
                 emit([ new Date(), new Date() ]);
             },
+
+            descargarExcel() {
+                this.buscarEmpleo();
+
+                let urlexcel = `${appApiUrl}/empleo/exportarexcel?${qs.stringify(this.filters)}`;
+                window.location = urlexcel;
+            }
         },
         mounted() {
             this.listarEmpleo();

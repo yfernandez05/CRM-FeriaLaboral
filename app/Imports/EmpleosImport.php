@@ -34,7 +34,9 @@ class EmpleosImport implements ToModel, WithStartRow
         return  new Empleo([
             'titulo' => $row[0],
             'requisitos' => $row[1],
-            'descripcion' => $row[2],
+            'beneficios' => $row[2],
+            'descripcion' => $row[3],
+            'vacantes' => $row[4],
             'idempresa'=> $this->empresa,
             'uuidimportacion' => $this->importacion->uuidimportacion,
         ]);

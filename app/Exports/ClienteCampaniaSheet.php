@@ -37,6 +37,14 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
         //     $query->where($filterCampania);
         // })
 
+        $idcarrera = $this->request->idcarrera;
+            if ($idcarrera) {
+                $consultas->whereHas('empleosPostulados.carreras', function ($query) use ($idcarrera) {
+                    // Realizar la comparación con el valor de idcarrera
+                    $query->where('idcarrera', $idcarrera);
+                });
+            }
+
 
             // Filtro para usuarios que no son administradores
 
@@ -83,13 +91,25 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
     */
     public function map($model): array
     {
+        //emplos postulaos
         $empPost='';
        foreach( $model->empleosPostulados as $item ){
-            $empPost = $empPost .','. $item->titulo;
+            $empPost = $empPost .''. $item->titulo .'; ';
         }
-        //dump($empPost);
+        
+        //estudios
+        $profileEstudios = '';
+        foreach( $model->estudios as $item ){
+            $profileEstudios = $profileEstudios .''. $item->carrera .' - '. $item->tipoestudio .' - '. $item->estadoestudio .' - '. $item->fechainicioFormated .' - '. $item->fechafinFormated .'; ';
+        }
 
+        //adjuntos CV
+        $profileFiles = '';
+        foreach( $model->files as $item ){
+            $profileFiles = $item->url_patch;
+        }
 
+        //dump($profileFiles);
 
         //dump($empPost);
         return [
@@ -98,18 +118,23 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
             $model->apellidos,
             $model->email,
             $model->telefono,
+            $model->direccion,
             $model->dni,
-            $empPost,
+            $empPost,            
             $model->fecha,
             $model->asistencianame,
             $model->fechapresencia,
             // $model->coddistrito,
-            $model->carrera,
-            $model->tipoparticipante,
+            //$model->carrera,
+            //$model->tipoparticipante,
             $model->edad,
-            $model->grado,
-            $model->colegio,
-            $model->anioegreso,
+            $model->minsalarial .' - '. $model->maxsalarial,
+            $model->descripcion,
+            $profileEstudios,
+            $profileFiles,
+            //$model->grado,
+            //$model->colegio,
+            //$model->anioegreso,
             $model->procedencia,
             $model->utm,
             $model->campaign_content,
@@ -119,10 +144,10 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
             $model->campaign_term,
             // $model->estado,
             $model->statename,
-            $model->idcampania,
+            //$model->idcampania,
             $model->campania->nombrecampania,
            // $model->eventoCliente->evento['nombreevento'],
-            $model->distrito->nombreubigeo,
+           // $model->distrito->nombreubigeo,
         ];
         //return dd($model);
     }
@@ -135,19 +160,24 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
             'Apellidos',
             'Email',
             'Telefono',
+            'Direccion',
             'Dni',
-            'empleos_postulados',
+            'Empleos postulados',
             // 'fecharegistro',
             'Fecha Registro',
             'Asistencia',
             'Fecha Asistencia',
             // 'coddistrito',
-            'Carrera',
-            'Tipoparticipante',
+            //'Carrera',
+            //'Tipoparticipante',
             'Edad',
-            'Grado',
-            'Colegio',
-            'Año de Egreso',
+            'Expectativa Salarial Minima - Maxima',
+            'Descripcion',
+            'Estudios Carreras / Titulos',
+            'Curriculum vitae',
+            //'Grado',
+            //'Colegio',
+            //'Año de Egreso',
             //'uuidimportacion',
             'Procedencia',
             'Utm',
@@ -158,10 +188,10 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
             'Campaign_term',
             // 'estado',
             'Estado',
-            'idcampania',
+            //'idcampania',
             'Campaña',
             //'Evento',
-            'Distrito',
+            //'Distrito',
         ];
     }
 

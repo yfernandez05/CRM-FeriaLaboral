@@ -71,14 +71,22 @@ class ClienteController extends BaseController
             ->paginate($perpage);
 
         }else{
-
+            
         $querycliente = Cliente::where($filters)
-            ->with('eventoCliente','campania','distrito','files','perfil'/* ,'empleo' */,'empleosPostulados')
+            ->with('eventoCliente','campania','distrito','files','perfil','estudios'/* ,'empleo' */,'empleosPostulados')
             //agregamos filtro adicionales
             ->whereHas('campania', function ($query) use ($filterCampania) {
                 $query->where($filterCampania);
             });
 
+            $idcarrera = $request->input('idcarrera');
+            if ($idcarrera) {
+                $querycliente->whereHas('empleosPostulados.carreras', function ($query) use ($idcarrera) {
+                    // Realizar la comparación con el valor de idcarrera
+                    $query->where('idcarrera', $idcarrera);
+                });
+            }
+            
             if ($this->user->idcuenta != RuleManager::SYSTEM_COMPANY_ACCOUNT || !in_array($this->user->idrol, RuleManager::ADMINISTRATORS_ACCESS)) {
                 // Filtro para usuarios que no son administradores
                 $querycliente->where(function ($query) {

@@ -40,8 +40,19 @@ Route::prefix('rest')->name('rest.')->group(function () {
     Route::get('campania/select', 'CampaniaController@select')->name('campania.select');
     Route::resource('campania', 'CampaniaController')->except(['show', 'create']);
 
+    Route::get('empresa/select', 'EmpresaController@select')->name('empresa.select');
     Route::resource('empresa', 'EmpresaController');
 
+    Route::get('carrera/select', 'CarreraController@select')->name('carrera.select');
+    Route::resource('carrera', 'CarreraController');
+
+    Route::get('experiencia/select', 'ExperienciaController@select')->name('experiencia.select');
+    Route::resource('experiencia', 'ExperienciaController');
+
+    Route::get('ciclo/select', 'CicloController@select')->name('ciclo.select');
+    Route::resource('ciclo', 'CicloController');
+
+    Route::get('empleo/exportarexcel', 'EmpleoController@exportarExcel')->name('empleo.exportarexcel');
     Route::get('empleo/descargarplantilla', 'EmpleoController@descargarplantilla')->name('empleo.descargarplantilla');
     Route::resource('empleo', 'EmpleoController');
 

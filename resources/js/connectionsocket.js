@@ -5,7 +5,7 @@ export const socket = connectionsocketserver();
 function connectionsocketserver(){
     let socket
     try {
-        socket = io(/* 'http://127.0.0.1:3000/', */ 'https://wsschat.padin.com.pe/', {
+        socket = io(/* 'http://127.0.0.1:3000/', */ /* 'https://wsschat.padin.com.pe/', */ {
             transports: ['polling'],
             withCredentials: true,
             extraHeaders: {

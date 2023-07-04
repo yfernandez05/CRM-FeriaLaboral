@@ -8,6 +8,7 @@ use App\Util\ResultManager;
 use App\Util\RuleManager;
 use Illuminate\Http\Request;
 use App\Util\LogErrorManager;
+use Exception;
 use Illuminate\Database\QueryException;
 
 class RolController extends BaseController

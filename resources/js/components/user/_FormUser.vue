@@ -143,9 +143,9 @@
             },
             listarEmpresa() {
                 let vm = this;
-                axios.get(`${appApiUrl}/empresa`)
+                axios.get(`${appApiUrl}/empresa/select`)
                     .then(function (response) {
-                        vm.empresas = response.data.data;
+                        vm.empresas = response.data;
                     })
                     .catch(function (error) {
                         console.log(error);

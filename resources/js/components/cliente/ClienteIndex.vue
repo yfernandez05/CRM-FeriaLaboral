@@ -64,6 +64,14 @@
                 </div>
 
                 <div class="form-group col-12 col-sm-6 col-md-4 col-xl-3">
+                    <label class="mb-1">Carrera</label>
+                    <select2 :options="carreras" @input="buscarCliente()" v-model="cliente.idcarrera"
+                        :selectValue="cliente.idcarrera" placeholder="Seleccione una carrera"
+                        keyProperty="idcarrera" textProperty="nombre">
+                    </select2>
+                </div>
+
+                <div class="form-group col-12 col-sm-6 col-md-4 col-xl-3">
                     <label class="mb-1">Campaña</label>
                     <select2 :options="campania" @input="buscarEvento()" v-model="cliente.idcampania"
                         :selectValue="cliente.idcampania" placeholder="Seleccione una campaña"
@@ -248,10 +256,12 @@
                     estado: false,
                     coddistrito: 0,
                     idcampania: 0,
+                    idcarrera: 0,
                     idevento: 0,
                     procedencia: '',
                 },
                 clientes: [],
+                carreras: [],
                 filters: {},
                 pagination: {},
                 campania: [],
@@ -362,6 +372,7 @@
                 this.cliente.telefono = '';
                 this.cliente.correo = '';
                 this.cliente.idcampania = 0;
+                this.cliente.idcarrera = 0;
                 this.cliente.coddistrito = 0;
                 this.cliente.procedencia = '';
                 this.cliente.idevento= 0;
@@ -476,7 +487,9 @@
                         this.cliente.telefono="";                    
                         this.filters.idevento = this.cliente.idevento;
                 }else{this.validated = false;}
-                    
+
+                if(this.cliente.idcarrera.length)
+                    this.filters.idcarrera = this.cliente.idcarrera;
                 
 
                 if (this.cliente.procedencia.length)
@@ -499,6 +512,16 @@
                         this.filters.fechahasta = this.formatDate(this.cliente.fecharegistro[1], 'DD-MM-YYYY');
                 }
             },
+            listarCarreras() {
+                let vm = this;
+                axios.get(`${appApiUrl}/carrera`)
+                    .then(function (response) {
+                        vm.carreras = response.data.data;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    })
+            },
             descargarExcel() {
                 this.addFiltersRole();
 
@@ -511,6 +534,7 @@
             this.listarCliente();
             this.listarCampania();
             //this.listarEvento();
+            this.listarCarreras();
             this.listarUbigeo();
             this.listarProcedenciaUTM();
         },

@@ -121,13 +121,18 @@ class EmpresaController extends BaseController
             if ($numberDependents == 0) {
 
                 $empresa = Empresa::findOrFail($id);
-                $empresa->estado = RuleManager::DISABLED_STATE;
-                $empresa->userupdate = $this->user->email;
+                $empresa->estado = $empresa->estado == RuleManager::DISABLED_STATE ? RuleManager::ACTIVE_STATE : RuleManager::DISABLED_STATE;
+                $empresa->userupdate = $this->user->email;               
                 $empresa->update();
 
-                $result = ResultManager::successMessage('Empresa desactivado correctamente.');
-            } else {
-                $result = ResultManager::errorMessage($errorMsg);
+                if ($empresa->estado == RuleManager::ACTIVE_STATE) {
+                    $result = ResultManager::successMessage('Empresa restaurado correctamente.');
+                } else if($empresa->estado == RuleManager::DISABLED_STATE) {
+                    $result = ResultManager::successMessage('Empresa eliminado correctamente.');
+                }
+
+            }else{
+                $result=ResultManager::warningMessage($errorMsg);
             }
         } catch (QueryException $e) {
             LogErrorManager::saveInDB($this, __FUNCTION__, $e);
@@ -145,8 +150,19 @@ class EmpresaController extends BaseController
     {
 
         $empresa->empresa = $request->empresa;
-        $empresa->ruc = $request->ruc;
+        $empresa->ruc = strval($request->ruc);
         $empresa->razonsocial = $request->razonsocial;
+
+        return $empresa;
+    }
+
+    public function select(Request $request)
+    {
+        $filters = $this->getFilters($request, new Empresa());
+
+        $empresa = Empresa::where($filters)
+            -> orderBy('idempresa')
+            ->get();
 
         return $empresa;
     }

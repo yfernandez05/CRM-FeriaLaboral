@@ -45,6 +45,51 @@ export default new VueRouter({
             component: require('./components/empresa/EmpresaEdit').default
         },
         {
+            path: `${intranetBaseUrl}/experiencia`,
+            name: 'spa.experiencia',
+            component: require('./components/experiencia/ExperienciaIndex').default
+        },
+        {
+            path: `${intranetBaseUrl}/experiencia/registrar`,
+            name: 'spa.experiencia.registrar',
+            component: require('./components/experiencia/ExperienciaCreate').default
+        },
+        {
+            path: `${intranetBaseUrl}/experiencia/editar/:id`,
+            name: 'spa.experiencia.editar',
+            component: require('./components/experiencia/ExperienciaEdit').default
+        },
+        {
+            path: `${intranetBaseUrl}/ciclo`,
+            name: 'spa.ciclo',
+            component: require('./components/ciclo/CicloIndex').default
+        },
+        {
+            path: `${intranetBaseUrl}/ciclo/registrar`,
+            name: 'spa.ciclo.registrar',
+            component: require('./components/ciclo/CicloCreate').default
+        },
+        {
+            path: `${intranetBaseUrl}/ciclo/editar/:id`,
+            name: 'spa.ciclo.editar',
+            component: require('./components/ciclo/CicloEdit').default
+        },
+        {
+            path: `${intranetBaseUrl}/carrera`,
+            name: 'spa.carrera',
+            component: require('./components/carrera/CarreraIndex').default
+        },
+        {
+            path: `${intranetBaseUrl}/carrera/registrar`,
+            name: 'spa.carrera.registrar',
+            component: require('./components/carrera/CarreraCreate').default
+        },
+        {
+            path: `${intranetBaseUrl}/carrera/editar/:id`,
+            name: 'spa.carrera.editar',
+            component: require('./components/carrera/CarreraEdit').default
+        },
+        {
             path: `${intranetBaseUrl}/empleo`,
             name: 'spa.empleo',
             component: require('./components/empleo/EmpleoIndex').default
