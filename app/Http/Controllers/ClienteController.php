@@ -73,7 +73,7 @@ class ClienteController extends BaseController
         }else{
             
         $querycliente = Cliente::where($filters)
-            ->with('eventoCliente','campania','distrito','files','perfil','estudios'/* ,'empleo' */,'empleosPostulados')
+            ->with('eventoCliente','campania','distrito','files','perfil','estudios','idiomas','historiallaboral','empleosPostulados')
             //agregamos filtro adicionales
             ->whereHas('campania', function ($query) use ($filterCampania) {
                 $query->where($filterCampania);

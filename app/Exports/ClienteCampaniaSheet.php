@@ -15,9 +15,10 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize, WithMapping, WithHeadings, WithTitle
+class ClienteCampaniaSheet implements FromCollection,WithStyles, WithColumnWidths, ShouldAutoSize, WithMapping, WithHeadings, WithTitle
 {
     public function __construct(Request $request){
         $this->request = $request;
@@ -96,11 +97,26 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
        foreach( $model->empleosPostulados as $item ){
             $empPost = $empPost .''. $item->titulo .'; ';
         }
+
+        //cantidad de postulaciones
+        $cantPostulaciones = count($model->empleosPostulados);
         
         //estudios
         $profileEstudios = '';
         foreach( $model->estudios as $item ){
             $profileEstudios = $profileEstudios .''. $item->carrera .' - '. $item->tipoestudio .' - '. $item->estadoestudio .' - '. $item->fechainicioFormated .' - '. $item->fechafinFormated .'; ';
+        }
+
+        //idiomas
+        $profileIdiomas = '';
+        foreach( $model->idiomas as $item ){
+            $profileIdiomas = $profileIdiomas .''. $item->nombre.'; ';
+        }
+
+        //historial Laboral
+        $profilehistoriallaboral = '';
+        foreach( $model->historiallaboral as $item ){
+            $profilehistoriallaboral = $profilehistoriallaboral .''. $item->puesto .' - '. $item->empresa .' - '. $item->actividad .' - '. $item->nivel .' - '. $item->area .' - a cargo '. $item->personaacargo .' - '. $item->descripcion .' - '. $item->fechainicioFormated .' - '. $item->fechapresentename .'; ';
         }
 
         //adjuntos CV
@@ -120,17 +136,20 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
             $model->telefono,
             $model->direccion,
             $model->dni,
-            $empPost,            
+            $empPost,
+            $cantPostulaciones,
             $model->fecha,
             $model->asistencianame,
             $model->fechapresencia,
             // $model->coddistrito,
             //$model->carrera,
             //$model->tipoparticipante,
-            $model->edad,
+            //$model->edad,
             $model->minsalarial .' - '. $model->maxsalarial,
             $model->descripcion,
             $profileEstudios,
+            $profileIdiomas,
+            $profilehistoriallaboral,
             $profileFiles,
             //$model->grado,
             //$model->colegio,
@@ -163,6 +182,7 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
             'Direccion',
             'Dni',
             'Empleos postulados',
+            'Cantidad postulaciones',
             // 'fecharegistro',
             'Fecha Registro',
             'Asistencia',
@@ -170,10 +190,12 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
             // 'coddistrito',
             //'Carrera',
             //'Tipoparticipante',
-            'Edad',
+            //'Edad',
             'Expectativa Salarial Minima - Maxima',
             'Descripcion',
             'Estudios Carreras / Titulos',
+            'Idiomas',
+            'Experiencias Laborales',
             'Curriculum vitae',
             //'Grado',
             //'Colegio',
@@ -207,11 +229,25 @@ class ClienteCampaniaSheet implements FromCollection,WithStyles, ShouldAutoSize,
         ];
     }
 
+    // tamaño expecifico a celdas
+    public function columnWidths(): array
+    {
+        return [
+        'F' => 35,
+        'H' => 35, 
+        'N' => 35,
+        'O' => 35,
+        'P' => 35,
+        'R' => 35
+        ];
+    }
+
     //dar un tamaño de espacio automatico a cada columna del excel
-    public function AutoSize(): array
+    /*public function AutoSize(): array
     {
         return [];
-    }
+    }*/
+    
 
     public function title(): string
     {

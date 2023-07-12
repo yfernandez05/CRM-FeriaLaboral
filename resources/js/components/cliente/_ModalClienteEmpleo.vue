@@ -7,13 +7,13 @@
             <div class="row">
                 <div class="col-md-12 mt-1">
                     <ul id="tabs" class="nav nav-tabs">
-                        <li class="nav-item"><a href="" data-target="#home1" data-toggle="tab" class="nav-link small text-uppercase active">Perfil Postulante</a></li>
-                        <li class="nav-item"><a href="" data-target="#profile1" data-toggle="tab" class="nav-link small text-uppercase">Educación</a></li>
-                        <li class="nav-item"><a href="" data-target="#messages1" data-toggle="tab" class="nav-link small text-uppercase">Experiencias</a></li>
+                        <li class="nav-item"><a href="" data-target="#perfilPostulante" data-toggle="tab" class="nav-link small text-uppercase active">Perfil Postulante</a></li>
+                        <li class="nav-item"><a href="" data-target="#estudiosPostulante" data-toggle="tab" class="nav-link small text-uppercase">Educación</a></li>
+                        <li class="nav-item"><a href="" data-target="#historiallaboral" data-toggle="tab" class="nav-link small text-uppercase">Experiencias</a></li>
                     </ul>
                     <br>
                     <div id="tabsContent" class="tab-content">
-                        <div id="home1" class="tab-pane fade active show">
+                        <div id="perfilPostulante" class="tab-pane fade active show">
                             <div class="form-row">                
                                 <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
                                     <label class="mb-0">Fecha Registro</label>
@@ -50,16 +50,6 @@
                                     <span class="form-control form-control-sm d-block text-truncate text-muted"
                                         v-text="cliente.direccion"></span>
                                 </div>                
-                                <!-- <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
-                                    <label class="mb-0">Labora en la Empresa </label>
-                                    <span class="form-control form-control-sm d-block text-truncate text-muted"
-                                        v-text="cliente.empresaactual"></span>
-                                </div>
-                                <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
-                                    <label class="mb-0">Cargo Actual</label>
-                                    <span class="form-control form-control-sm d-block text-truncate text-muted"
-                                        v-text="cliente.cargoactual"></span>
-                                </div> -->
                                 <div class="form-group form-group-sm col-12 col-sm-6 col-md-4 col-xl-3">
                                     <label class="mb-0">Currículum Vitae</label>
                                     <div class="d-flex align-items-center">
@@ -68,9 +58,6 @@
                                                 <a :href="cliente.files[0].url_patch" class="btn btn-primary" target="_blank" download>
                                                     <i class="far fa-file-pdf"> </i> Ver/Descargar
                                                 </a>
-                                                <!-- <a :href="cliente.files[0].url_patch" class="btn btn-success" download>
-                                                <i class="fas fa-download"></i> Descargar
-                                                </a> -->
                                             </div>
                                         </template>
                                         <template v-else>
@@ -97,18 +84,40 @@
                                 
                             </div>
                         </div>
-                        <div id="profile1" class="tab-pane fade ">
+                        <div id="estudiosPostulante" class="tab-pane fade ">
                             <div class="form-row">                
-                                <div class="col-6 shadow-sm mb-2 p-3" v-for="est in cliente.estudios" :key="est.id">
-                                    <h6 v-text="est.carrera" class="text-primary mb-0"></h6>
-                                    <p class="mb-0">{{est.tipoestudio}} - {{est.estadoestudio}}</p>
-                                    <p class="mb-0">{{est.fechainicioFormated}} / {{est.fechafinFormated}}</p>
+                                <div class="col-6 text-muted" v-for="est in cliente.estudios" :key="est.id">
+                                    <div class="card border shadow-sm mb-2 p-3">
+                                        <h6 v-text="est.carrera" class="text-primary mb-0"></h6>
+                                        <p class="mb-0">{{est.tipoestudio}} - {{est.estadoestudio}}</p>
+                                        <p class="mb-0">{{est.fechainicioFormated}} / {{est.fechafinFormated}}</p>
+                                    </div>
                                 </div>
                             </div>
+                            <div class="form-row mt-2" v-if="cliente.idiomas[0]">                                  
+                                <div class="col-12">
+                                    <h6 class="font-weight-bold">Idiomas:</h6>
+                                </div>
+                                <div class="col-12 text-muted">
+                                    <div class="card border shadow-sm mb-2 p-3">
+                                        <h6 class="text-primary mb-0" v-text="cliente.idiomas.map(idi => idi.nombre).join(', ')"></h6>
+                                    </div>
+                                </div>  
+                            </div>
                         </div>
-                        <div id="messages1" class="tab-pane fade">
-                            <div class="form-row my-2">                
-                                
+                        <div id="historiallaboral" class="tab-pane fade">
+                            <div class="form-row">                
+                                <div class="col-6 text-muted" v-for="hl in cliente.historiallaboral" :key="hl.id">
+                                    <div class="card border shadow-sm mb-2 p-3">
+                                        <h6 v-text="hl.puesto" class="text-primary mb-1"></h6>
+                                        <p class="mb-1">{{hl.empresa}} - {{hl.actividad}}</p>
+                                        <p class="mb-1">{{hl.puesto}} - {{hl.nivel}}</p>
+                                        <p class="mb-1" v-text="hl.area"></p>
+                                        <p class="mb-1" v-if="hl.personaacargo">Personas a cargo: {{ hl.personaacargo }}</p>
+                                        <p class="mb-2">{{hl.fechainicioFormated}} / {{hl.fechapresentename}}</p>
+                                        <textarea class="form-control form-control-sm d-block  text-muted" rows="2" v-text="hl.descripcion"></textarea>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

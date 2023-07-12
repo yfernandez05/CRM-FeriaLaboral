@@ -8,6 +8,8 @@ use App\Models\Perfil;
 use App\Models\Campania;
 use App\Models\Empleo;
 use App\Models\Estudio;
+use App\Models\Idioma;
+use App\Models\HistorialLaboral;
 use App\Models\ClienteEmpleo;
 use App\Util\RuleManager;
 use Illuminate\Database\Eloquent\Model;
@@ -193,6 +195,16 @@ class Cliente extends Model
     public function estudios()
     {
         return $this->hasMany(Estudio::class, 'idcliente');
+    }
+
+    public function idiomas()
+    {
+        return $this->hasMany(Idioma::class, 'idcliente');
+    }
+    
+    public function historiallaboral()
+    {
+        return $this->hasMany(HistorialLaboral::class, 'idcliente');
     }
     
     
