@@ -246,7 +246,7 @@
                 
                 let optionMessage ='Eliminar';
 
-                if(!param.isactive) optionMessage = 'Restaurar';
+                /* if(!param.isactive) optionMessage = 'Restaurar';
 
 
                 swalAlertConfirm(`¿Seguro que quiere ${optionMessage} el Empleo <b>${param.titulo}</b>?`, appName)
@@ -279,7 +279,7 @@
                         }
 
 
-                    });
+                    }); */
             },            
             limpiarFiltroEmpleo(){
                 this.empleo.titulo = '';

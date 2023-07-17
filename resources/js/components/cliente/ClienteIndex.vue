@@ -5,6 +5,18 @@
             Postulante
         </template>
         <template v-slot:card-header-actions>
+            <button class="btn btn-sm btn-danger waves-effect waves-light" @click="descargarPDFCV()">
+                <i class="fas fa-file-pdf"></i>
+                <span class="d-none d-sm-inline-block">
+                    Descargar CV Postulantes PDF
+                </span>
+            </button>
+            <button class="btn btn-sm btn-green waves-effect waves-light" @click="descargarExcelCV()">
+                <i class="fas fa-file-excel"></i>
+                <span class="d-none d-sm-inline-block">
+                    Descargar CV Postulantes Excel
+                </span>
+            </button>
             <button class="btn btn-sm btn-green waves-effect waves-light" @click="descargarExcel()">
                 <i class="fas fa-file-excel"></i>
                 <span class="d-none d-sm-inline-block">
@@ -527,6 +539,37 @@
 
                 let urlexcel = `${appApiUrl}/cliente/exportarexcel?${qs.stringify(this.filters)}`;
                 window.location = urlexcel;
+            },
+            descargarExcelCV() {
+                this.addFiltersRole();
+
+                let urlexcel = `${appApiUrl}/cliente/exportarexcelcv?${qs.stringify(this.filters)}`;
+                window.location = urlexcel;
+            },
+            descargarPDFCV() {
+                this.addFiltersRole();
+                showPreloader();
+                let urlPDF = `${appApiUrl}/cliente/descargarpdf?${qs.stringify(this.filters)}`;
+                axios.get(urlPDF)
+                .then(response => {
+                    if (response.data) {
+                        hidePreloader();
+                        successMessage('Descargando archivos (CV)', appName);
+                        // Si hay archivos disponibles, abrir la ventana nueva para descargar
+                        window.location =urlPDF;
+                    } 
+                    else{
+                        // Si no hay archivos disponibles, mostrar un mensaje al usuario
+                        hidePreloader();
+                        warningMessage('No hay archivos (CV) disponibles para descargar.', appName);
+                    }
+                    hidePreloader();
+                })
+                .catch(error => {
+                    // Manejar el error de la petición al servidor
+                    hidePreloader();
+                    console.error(error);
+                });
             }
 
         },

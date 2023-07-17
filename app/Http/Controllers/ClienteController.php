@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ClienteExportCV;
 use Exception;
 use Carbon\Carbon;
 use App\Models\Cliente;
@@ -19,6 +20,7 @@ use App\Models\EventoCliente;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Database\QueryException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use ZipArchive;
 
 class ClienteController extends BaseController
 {
@@ -340,6 +342,121 @@ class ClienteController extends BaseController
 
             throw new HttpException(500);
         }
+    }
+
+    public function exportarExcelCV(Request $request)
+    {
+        try {
+            $name = 'postulantesCV[' . Carbon::now('America/Lima')->format('d-m-Y H:i:s') . ' ].xlsx';
+            return Excel::download(new ClienteExportCV($request), $name);
+
+        } catch (QueryException $e) {
+            LogErrorManager::saveInDB($this, __FUNCTION__, $e);
+
+            throw new HttpException(500);
+        } catch (Exception $e) {
+            LogErrorManager::saveInDB($this, __FUNCTION__, $e);
+
+            throw new HttpException(500);
+        }
+    }
+
+    public function descargarPDF(Request $request)
+    {
+        
+        $filters = $this->getFilters($request, new Cliente());
+        //agregamos el modelo EVENTO adicionales en cliente + evento, hace el filtro de busqueda en Cliente + Evento
+        $filtersEvento = $this->getFilters($request, new EventoCliente());
+        $filterCampania = $this->getFilters($request, new Campania());
+        $perpage = $this->getLimitPagination($request);
+
+        $querycliente = Cliente::where($filters)
+        ->with('eventoCliente','campania','distrito','files')
+        //agregamos filtro adicionales
+        ->whereHas('campania', function ($query) use ($filterCampania) {
+            $query->where($filterCampania);
+        });
+
+        $idcarrera = $request->input('idcarrera');
+        if ($idcarrera) {
+            $querycliente->whereHas('empleosPostulados.carreras', function ($query) use ($idcarrera) {
+                // Realizar la comparación con el valor de idcarrera
+                $query->where('idcarrera', $idcarrera);
+            });
+        }
+        
+        if ($this->user->idcuenta != RuleManager::SYSTEM_COMPANY_ACCOUNT || !in_array($this->user->idrol, RuleManager::ADMINISTRATORS_ACCESS)) {
+            // Filtro para usuarios que no son administradores
+            $querycliente->where(function ($query) {
+                $query->whereHas('campania', function ($query) {
+                    $query->where('idcuenta', '=', $this->user->idcuenta);
+                })
+                ->whereHas('empleosPostulados', function ($query) {
+                    $query->where('idempresa', '=', $this->user->idempresa);
+                });
+            })
+            ->with(['empleosPostulados' => function ($query) {
+                $query->where('idempresa', $this->user->idempresa);
+            }]);
+        }
+
+        if ($request->exists('fechadesde')) {
+            $fechadesde = Carbon::createFromFormat('d-m-Y', $request->fechadesde)->toDateString();
+            $querycliente->whereDate('fecharegistro', '>=', $fechadesde);
+        }
+
+        if ($request->exists('fechahasta')) {
+            $fechahasta = Carbon::createFromFormat('d-m-Y', $request->fechahasta)->toDateString();
+            $querycliente->whereDate('fecharegistro', '<=', $fechahasta);
+        }
+
+        $cliente = $querycliente->orderBy('idcliente', 'DESC')
+        ->get();
+    
+        $urlsArchivosPDF = $cliente->pluck('files')->flatten()->pluck('url_patch');
+        $archivosPDF = $urlsArchivosPDF->toArray();
+
+        if (empty($archivosPDF)) {
+            // No hay archivos para descargar,mostrar un mensaje de error
+            return null;
+        }
+        
+        
+        $nombreZipBase = 'CV_Postulantes';
+        $nombreZip = $nombreZipBase . '.zip';
+
+        $zip = new ZipArchive();
+        $zip->open($nombreZip, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+
+        foreach ($archivosPDF as $urlPDF) {
+            set_time_limit(60); // Establece un límite de tiempo para cada archivo individual
+
+            $contenidoPDF = file_get_contents($urlPDF);
+
+            $nombreArchivo = basename($urlPDF);
+            $nombreDocumento = null;
+
+            foreach ($cliente as $item) {
+                foreach ($item->files as $archivo) {
+                    if ($archivo->url_patch === $urlPDF) {
+                        $nombreDocumento = $archivo->nombre;
+                        break;
+                    }
+                }
+                if ($nombreDocumento) {
+                    break;
+                }
+            }
+
+            if ($nombreDocumento) {
+                $nombreArchivoConExtension = $nombreDocumento . '.pdf';
+                $zip->addFromString($nombreArchivoConExtension, $contenidoPDF);
+            }
+        }
+
+        $zip->close();
+
+        return response()->download($nombreZip)->deleteFileAfterSend(true);
     }
 
     public function descargarplantilla(Request $request)

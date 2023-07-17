@@ -69,7 +69,7 @@
                     <small class="form-control-feedback" v-if="errorExists('ciclo')" v-text="showError('ciclo').errorDetail"></small>
                 </div>
                 <div class="form-group col-12 col-sm-6 col-md-4 col-xl-3" :class="{'has-danger': errorExists('coddepartamento')}">
-                    <label class="mb-1">Departamento <small class="text-danger">(*)</small></label>
+                    <label class="mb-1">Departamento <span class="fa fa-question-circle" id="tooltip-icon" data-toggle="tooltip" title="Lugar donde estará disponible el empleo"></span><small class="text-danger"> (*) </small></label>
                     <select2 :options="departamentos" v-model="empleo.coddepartamento"
                         :selectValue="empleo.coddepartamento" placeholder="Seleccione una Departamento"
                         keyProperty="pkubigeo" textProperty="nombrecompleto">

@@ -55,7 +55,7 @@ class Empleo extends Model
     
     public function getCoddepartamentoAttribute($value)
     {
-        return $value ?? '';
+        return $value ?? 0;
     }
 
     public function getIdexperienciaAttribute($value)

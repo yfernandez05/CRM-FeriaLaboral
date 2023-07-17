@@ -72,7 +72,9 @@ Route::prefix('rest')->name('rest.')->group(function () {
 
     Route::get('cliente/procedenciaAdsUtm', 'ClienteController@procedenciaAdsUtm')->name('cliente.procedenciaAdsUtm');
     Route::get('cliente/descargarplantilla', 'ClienteController@descargarplantilla')->name('cliente.descargarplantilla');
+    Route::get('cliente/descargarpdf', 'ClienteController@descargarPDF')->name('cliente.descargarpdf');
     Route::get('cliente/exportarexcel', 'ClienteController@exportarExcel')->name('cuenta.exportarexcel');
+    Route::get('cliente/exportarexcelcv', 'ClienteController@exportarExcelCV')->name('cliente.exportarexcelcv');
     Route::post('cliente/importarexcel', 'ClienteController@importarExcel')->name('cuenta.importarexcel');
     Route::post('cliente/physicallyremove', 'ClienteController@physicallyRemove')->name('cliente.physicallyremove');
     Route::resource('cliente', 'ClienteController')->except(['show', 'create']);
