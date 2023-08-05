@@ -79,6 +79,8 @@ Route::prefix('rest')->name('rest.')->group(function () {
     Route::post('cliente/physicallyremove', 'ClienteController@physicallyRemove')->name('cliente.physicallyremove');
     Route::resource('cliente', 'ClienteController')->except(['show', 'create']);
 
+    Route::resource('descargarhistorial', 'DescargaHistorialController');
+    
     Route::resource('clienteevento', 'EventoClienteController');
 
     Route::get('ubigeo/index', 'UbigeoController@index')->name('ubigeo.index');

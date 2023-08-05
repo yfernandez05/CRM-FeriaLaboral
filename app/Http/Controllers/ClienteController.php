@@ -371,7 +371,7 @@ class ClienteController extends BaseController
         $perpage = $this->getLimitPagination($request);
 
         $querycliente = Cliente::where($filters)
-        ->with('eventoCliente','campania','distrito','files')
+        ->with('eventoCliente','campania','distrito','files','empleosPostulados')
         //agregamos filtro adicionales
         ->whereHas('campania', function ($query) use ($filterCampania) {
             $query->where($filterCampania);
@@ -412,6 +412,8 @@ class ClienteController extends BaseController
 
         $cliente = $querycliente->orderBy('idcliente', 'DESC')
         ->get();
+
+       //return dd($cliente);
     
         $urlsArchivosPDF = $cliente->pluck('files')->flatten()->pluck('url_patch');
         $archivosPDF = $urlsArchivosPDF->toArray();
@@ -440,6 +442,14 @@ class ClienteController extends BaseController
                 foreach ($item->files as $archivo) {
                     if ($archivo->url_patch === $urlPDF) {
                         $nombreDocumento = $archivo->nombre;
+
+                        // Obtener los títulos de los empleos postulados
+                        $empleosPostulados = $item->empleosPostulados;
+                        if ($empleosPostulados->isNotEmpty()) {
+                            $titulosEmpleos = $empleosPostulados->pluck('titulo')->implode(', ');
+                            $nombreDocumento .= ' - ' . $titulosEmpleos;
+                        }
+                        
                         break;
                     }
                 }
