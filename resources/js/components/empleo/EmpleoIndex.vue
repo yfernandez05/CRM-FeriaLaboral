@@ -23,12 +23,12 @@
                     Limpiar
                 </span>
             </button>
-            <!-- <router-link :to="{name:'spa.empleo.registrar'}" class="btn btn-sm btn-success waves-effect waves-light">
+            <router-link :to="{name:'spa.empleo.registrar'}" class="btn btn-sm btn-success waves-effect waves-light">
                  <i class="fas fa-plus"></i>
                 <span class="d-none d-sm-inline-block ">
                     Nuevo
                 </span>
-            </router-link>   -->  
+            </router-link>    
         </template>
         <template v-slot:card-body-main>
             <div class="form-row">

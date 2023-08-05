@@ -14,8 +14,6 @@ use App\Util\LogErrorManager;
 use App\Exports\ClientesExport;
 use App\Exports\plantillaCliente;
 use App\Models\Campania;
-use App\Models\Empleo;
-use App\Models\Evento;
 use App\Models\EventoCliente;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Database\QueryException;
@@ -363,7 +361,6 @@ class ClienteController extends BaseController
 
     public function descargarPDF(Request $request)
     {
-        
         $filters = $this->getFilters($request, new Cliente());
         //agregamos el modelo EVENTO adicionales en cliente + evento, hace el filtro de busqueda en Cliente + Evento
         $filtersEvento = $this->getFilters($request, new EventoCliente());
@@ -425,11 +422,10 @@ class ClienteController extends BaseController
         $nombreZipBase = 'CV_Postulantes';
 
         /* $archivosPDF = [
-            'http://127.0.0.1:8003/storage/cv/DEBtgDDiFpN7JWAcoTcENtobdWLdTuj1McqJPcXN.pdf',
-            'http://127.0.0.1:8003/storage/cv/Wp0vphu38Ucfe9szxuVEplGtyIMSEczYfT11Ie8C.pdf',
+            'https://eventoempleabilidad.zegelipae.edu.pe/storage/cv/8oqiusHvOR0i7mJJbhOoyBjtFvtjIBom0EkPgIqT.pdf',
             // Agrega más URLs de archivos PDF aquí
-        ]; */
-
+        ];
+    */
         $nombreZip = $nombreZipBase . '.zip';
 
         $zip = new ZipArchive();

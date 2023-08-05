@@ -102,10 +102,10 @@
             </router-link>
 
             <div>
-                <!-- <button type="button" class="btn btn-success waves-effect waves-light" @click="doSaveData">
+                <button type="button" class="btn btn-success waves-effect waves-light" @click="doSaveData">
                     <i class="fa fa-save"></i>
                     Guardar
-                </button> -->
+                </button>
                 <button type="reset" class="btn waves-effect waves-light btn-outline-secondary ml-2">
                     <i class="fa fa-window-close"></i> <span class="button-text">Cancelar</span>
                 </button>

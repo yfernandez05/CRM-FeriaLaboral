@@ -539,23 +539,28 @@
 
                 let urlexcel = `${appApiUrl}/cliente/exportarexcel?${qs.stringify(this.filters)}`;
                 window.location = urlexcel;
+                this.registerHistorialDescarga(3);
             },
             descargarExcelCV() {
                 this.addFiltersRole();
 
                 let urlexcel = `${appApiUrl}/cliente/exportarexcelcv?${qs.stringify(this.filters)}`;
                 window.location = urlexcel;
+                this.registerHistorialDescarga(2);
             },
             descargarPDFCV() {
+                console.log('activo');
                 this.addFiltersRole();
                 showPreloader();
                 let urlPDF = `${appApiUrl}/cliente/descargarpdf?${qs.stringify(this.filters)}`;
+                let downloadUrl = urlPDF;
                 axios.get(urlPDF)
                 .then(response => {
                     if (response.data != 0) {
                         hidePreloader();
                         // Si hay archivos disponibles, abrir la ventana nueva para descargar
-                        window.location =urlPDF;
+                        window.location.href = downloadUrl;
+                        this.registerHistorialDescarga(1);
                     } else {
                         // Si no hay archivos disponibles, mostrar un mensaje al usuario
                         hidePreloader();
@@ -569,7 +574,33 @@
                     hidePreloader();
                     console.error(error);
                 });
-            }
+            },
+            registerHistorialDescarga(iddocumento){
+                let data = {
+                    tipodocumento: iddocumento // El valor del parámetro tipodocumento que deseas enviar
+                };
+
+                axios.post(`${appApiUrl}/descargarhistorial?`,data)
+                .then(response => {
+                    // Respuesta recibida del controlador después de guardar los datos
+                    if (response.data.status) {
+                        // Realizar la descarga del archivo solo si se completó el registro
+                        if (response.data.archivos_disponibles) {
+                            console.log('regsitro guardado');
+                        } else {
+                            hidePreloader();
+                            
+                        }
+                    } else {
+                        hidePreloader();
+                        
+                    }
+                })
+                .catch(error => {
+                    hidePreloader();
+                    console.error(error);
+                });
+            },
 
         },
         mounted() {
